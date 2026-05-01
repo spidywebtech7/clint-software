@@ -1,6 +1,9 @@
 {
   "name": "clint-software-root",
   "version": "1.0.0",
+  "engines": {
+    "node": "20.x"
+  },
   "description": "Root package to delegate to simple-crm",
   "scripts": {
     "start": "cd simple-crm && node server.js",
