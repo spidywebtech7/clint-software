@@ -1,0 +1,11 @@
+{
+  "name": "clint-software-root",
+  "version": "1.0.0",
+  "description": "Root package to delegate to simple-crm",
+  "scripts": {
+    "start": "cd simple-crm && node server.js",
+    "build": "cd simple-crm && npm install"
+  },
+  "author": "",
+  "license": "ISC"
+}
