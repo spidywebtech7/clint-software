@@ -4,7 +4,7 @@
   "description": "Root package to delegate to simple-crm",
   "scripts": {
     "start": "cd simple-crm && node server.js",
-    "build": "cd simple-crm && npm install"
+    "build": "cd simple-crm && npm install && npm rebuild sqlite3"
   },
   "author": "",
   "license": "ISC"
