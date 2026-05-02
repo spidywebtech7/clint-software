@@ -17,9 +17,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (!token) return <Navigate to="/login" replace />;
   
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div className="block lg:flex min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto h-screen">
+      <main className="flex-1">
         {children}
       </main>
     </div>

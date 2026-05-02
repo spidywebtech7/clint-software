@@ -41,15 +41,15 @@ const Dashboard = () => {
   if (loading) return <div className="p-8 text-center">Loading stats...</div>;
 
   return (
-    <div className="space-y-8 p-8 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 p-4 md:p-8 max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Dashboard</h1>
-          <p className="text-slate-600 dark:text-slate-300">Welcome back, here's an overview of your client calls.</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Dashboard</h1>
+          <p className="text-slate-600 dark:text-slate-300 text-sm md:text-base">Welcome back, here's an overview.</p>
         </div>
-        <div className="flex gap-2 bg-emerald-50 dark:bg-emerald-500/10 p-3 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
-          <TrendingUp className="text-emerald-500" size={20} />
-          <span className="text-emerald-700 dark:text-emerald-400 font-bold">Performance +12%</span>
+        <div className="flex gap-2 bg-emerald-50 dark:bg-emerald-500/10 p-2.5 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
+          <TrendingUp className="text-emerald-500" size={18} />
+          <span className="text-emerald-700 dark:text-emerald-400 font-bold text-sm">Performance +12%</span>
         </div>
       </div>
 
