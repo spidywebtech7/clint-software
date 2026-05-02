@@ -31,31 +31,56 @@ router.get('/', async (req, res) => {
 router.get('/stats', async (req, res) => {
   try {
     const total = await Client.countDocuments();
-    const called = await Client.countDocuments({ status: 'Called' });
     const pending = await Client.countDocuments({ status: 'Pending' });
-    const followUp = await Client.countDocuments({ status: 'Follow-up Required' });
+    const completed = await Client.countDocuments({ status: 'Completed' });
+    const meetings = await Client.countDocuments({ meetingDate: { $gte: new Date() } });
 
-    res.json({ total, called, pending, followUp });
+    res.json({ total, pending, completed, meetings });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 // Create a new client
 router.post('/', async (req, res) => {
   const client = new Client(req.body);
   try {
     const newClient = await client.save();
+    req.io.emit('clients:changed', { action: 'create', data: newClient });
     res.status(201).json(newClient);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
+// Mark client as completed
+router.patch('/:id/complete', async (req, res) => {
+  try {
+    const client = await Client.findByIdAndUpdate(
+      req.params.id,
+      { status: 'Completed' },
+      { new: true }
+    );
+    if (!client) return res.status(404).json({ message: 'Client not found' });
+    
+    // Notify all clients via socket
+    if (req.io) {
+      req.io.emit('clients:changed');
+    }
+    
+    res.json(client);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Update a client
 router.put('/:id', async (req, res) => {
+
   try {
     const updatedClient = await Client.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    req.io.emit('clients:changed', { action: 'update', data: updatedClient });
     res.json(updatedClient);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -66,6 +91,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     await Client.findByIdAndDelete(req.params.id);
+    req.io.emit('clients:changed', { action: 'delete', id: req.params.id });
     res.json({ message: 'Client deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });

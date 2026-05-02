@@ -6,14 +6,21 @@ const clientSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  email: {
+    type: String,
+    trim: true
+  },
   phone: {
     type: String,
     required: true,
     trim: true
   },
-  date: {
-    type: Date,
-    default: Date.now
+  businessType: {
+    type: String,
+    trim: true
+  },
+  meetingDate: {
+    type: Date
   },
   notes: {
     type: String,
@@ -21,11 +28,12 @@ const clientSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Called', 'Pending', 'Follow-up Required'],
+    enum: ['Pending', 'Completed', 'Called', 'Follow-up Required'],
     default: 'Pending'
   }
 }, {
   timestamps: true
 });
+
 
 module.exports = mongoose.model('Client', clientSchema);

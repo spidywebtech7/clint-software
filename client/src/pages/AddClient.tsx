@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Save, X, User, Phone, Calendar, StickyNote, CheckCircle2 } from 'lucide-react';
+import { Save, X, User, Phone, Calendar, StickyNote, CheckCircle2, Mail, Briefcase } from 'lucide-react';
 import api from '../api/axios';
 import { motion } from 'framer-motion';
 
@@ -9,8 +9,10 @@ const AddClient = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
+    email: '',
     phone: '',
-    date: new Date().toISOString().split('T')[0],
+    businessType: '',
+    meetingDate: '',
     status: 'Pending',
     notes: ''
   });
@@ -34,7 +36,7 @@ const AddClient = () => {
   };
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
+    <div className="p-8 max-w-4xl mx-auto">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -68,6 +70,19 @@ const AddClient = () => {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                <Mail size={14} /> Email Address
+              </label>
+              <input
+                type="email"
+                name="email"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                placeholder="john@example.com"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                 <Phone size={14} /> Phone Number
               </label>
               <input
@@ -82,14 +97,26 @@ const AddClient = () => {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <Calendar size={14} /> Date
+                <Briefcase size={14} /> Business Type
               </label>
               <input
-                required
-                type="date"
-                name="date"
+                type="text"
+                name="businessType"
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                value={formData.date}
+                placeholder="e.g. Jewels, Tech, etc."
+                value={formData.businessType}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                <Calendar size={14} /> Meeting Date
+              </label>
+              <input
+                type="date"
+                name="meetingDate"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                value={formData.meetingDate}
                 onChange={handleChange}
               />
             </div>
@@ -104,11 +131,13 @@ const AddClient = () => {
                 onChange={handleChange}
               >
                 <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
                 <option value="Called">Called</option>
                 <option value="Follow-up Required">Follow-up Required</option>
               </select>
             </div>
           </div>
+
 
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">

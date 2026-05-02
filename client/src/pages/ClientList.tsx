@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Filter, Edit2, Trash2, Phone, Calendar, MoreVertical } from 'lucide-react';
+import { Search, Filter, Edit2, Trash2, Phone, Calendar, MoreVertical, Check } from 'lucide-react';
 import api from '../api/axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSocket } from '../hooks/useSocket';
 
 interface Client {
   _id: string;
   name: string;
+  email: string;
   phone: string;
-  date: string;
-  status: 'Called' | 'Pending' | 'Follow-up Required';
+  businessType: string;
+  meetingDate: string;
+  status: 'Pending' | 'Completed' | 'Called' | 'Follow-up Required';
   notes: string;
 }
+
 
 const ClientList = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const socket = useSocket();
 
   const fetchClients = async () => {
     try {
@@ -35,6 +40,28 @@ const ClientList = () => {
     fetchClients();
   }, [search, statusFilter]);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('clients:changed', () => {
+      fetchClients();
+    });
+
+    return () => {
+      socket.off('clients:changed');
+    };
+  }, [socket, search, statusFilter]);
+
+
+  const handleComplete = async (id: string) => {
+    try {
+      await api.patch(`/clients/${id}/complete`);
+      fetchClients();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this client?')) {
       try {
@@ -48,8 +75,9 @@ const ClientList = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Called': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
+      case 'Completed': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
       case 'Pending': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+      case 'Called': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
       case 'Follow-up Required': return 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400';
       default: return 'bg-slate-100 text-slate-700';
     }
@@ -80,8 +108,9 @@ const ClientList = () => {
             onChange={(e) => setStatusFilter(e.target.value)}
           >
             <option value="All">All Status</option>
-            <option value="Called">Called</option>
             <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+            <option value="Called">Called</option>
             <option value="Follow-up Required">Follow-up</option>
           </select>
         </div>
@@ -92,9 +121,12 @@ const ClientList = () => {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Client Details</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Phone</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Business Type</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Date Added</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Meeting Date</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
@@ -108,28 +140,29 @@ const ClientList = () => {
                     exit={{ opacity: 0 }}
                     className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors"
                   >
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-slate-900 dark:text-white">{client.name}</span>
-                        <div className="flex items-center gap-1 text-sm text-slate-500">
-                          <Phone size={12} />
-                          {client.phone}
-                        </div>
-                      </div>
-                    </td>
+                    <td className="px-6 py-4 font-bold text-slate-900 dark:text-white">{client.name}</td>
+                    <td className="px-6 py-4 text-slate-500">{client.email || '-'}</td>
+                    <td className="px-6 py-4 text-slate-500 font-medium">{client.phone}</td>
+                    <td className="px-6 py-4 text-slate-500">{client.businessType || '-'}</td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(client.status)}`}>
                         {client.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-slate-500 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Calendar size={14} />
-                        {new Date(client.date).toLocaleDateString()}
-                      </div>
+                      {client.meetingDate ? new Date(client.meetingDate).toLocaleDateString() : 'Not Set'}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
+                        {client.status !== 'Completed' && (
+                          <button 
+                            onClick={() => handleComplete(client._id)}
+                            className="p-2 text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors"
+                            title="Mark as Completed"
+                          >
+                            <Check size={18} />
+                          </button>
+                        )}
                         <button className="p-2 text-slate-400 hover:text-primary-500 transition-colors">
                           <Edit2 size={18} />
                         </button>
@@ -146,7 +179,7 @@ const ClientList = () => {
               </AnimatePresence>
               {clients.length === 0 && !loading && (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-slate-400 italic">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400 italic">
                     No clients found.
                   </td>
                 </tr>

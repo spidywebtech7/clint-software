@@ -11,7 +11,7 @@ import {
   useColorScheme,
   Alert
 } from 'react-native';
-import { User, Phone, Calendar, StickyNote, Save } from 'lucide-react-native';
+import { User, Phone, Calendar, StickyNote, Save, Mail, Briefcase } from 'lucide-react-native';
 import api from '../api/api';
 import { colors } from '../theme/colors';
 import { useNavigation } from '@react-navigation/native';
@@ -22,8 +22,10 @@ const AddClientScreen = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
+    email: '',
     phone: '',
-    date: new Date().toISOString().split('T')[0],
+    businessType: '',
+    meetingDate: new Date().toISOString().split('T')[0],
     status: 'Pending',
     notes: ''
   });
@@ -76,6 +78,22 @@ const AddClientScreen = () => {
           </View>
 
           <View style={styles.inputGroup}>
+            <Text style={[styles.label, { color: labelColor }]}>Email Address</Text>
+            <View style={[styles.inputWrapper, { backgroundColor: inputBg }]}>
+              <Mail size={20} color={colors.slate[400]} />
+              <TextInput
+                style={[styles.input, { color: textColor }]}
+                placeholder="john@example.com"
+                placeholderTextColor={colors.slate[400]}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={formData.email}
+                onChangeText={(text) => setFormData({...formData, email: text})}
+              />
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: labelColor }]}>Phone Number</Text>
             <View style={[styles.inputWrapper, { backgroundColor: inputBg }]}>
               <Phone size={20} color={colors.slate[400]} />
@@ -91,9 +109,37 @@ const AddClientScreen = () => {
           </View>
 
           <View style={styles.inputGroup}>
+            <Text style={[styles.label, { color: labelColor }]}>Business Type</Text>
+            <View style={[styles.inputWrapper, { backgroundColor: inputBg }]}>
+              <Briefcase size={20} color={colors.slate[400]} />
+              <TextInput
+                style={[styles.input, { color: textColor }]}
+                placeholder="e.g. Jewels"
+                placeholderTextColor={colors.slate[400]}
+                value={formData.businessType}
+                onChangeText={(text) => setFormData({...formData, businessType: text})}
+              />
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, { color: labelColor }]}>Meeting Date</Text>
+            <View style={[styles.inputWrapper, { backgroundColor: inputBg }]}>
+              <Calendar size={20} color={colors.slate[400]} />
+              <TextInput
+                style={[styles.input, { color: textColor }]}
+                placeholder="YYYY-MM-DD"
+                placeholderTextColor={colors.slate[400]}
+                value={formData.meetingDate}
+                onChangeText={(text) => setFormData({...formData, meetingDate: text})}
+              />
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: labelColor }]}>Status</Text>
             <View style={styles.statusOptions}>
-              {['Pending', 'Called', 'Follow-up Required'].map((status) => (
+              {['Pending', 'Completed', 'Called', 'Follow-up Required'].map((status) => (
                 <TouchableOpacity
                   key={status}
                   onPress={() => setFormData({...formData, status})}
@@ -110,6 +156,7 @@ const AddClientScreen = () => {
               ))}
             </View>
           </View>
+
 
           <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: labelColor }]}>Notes</Text>

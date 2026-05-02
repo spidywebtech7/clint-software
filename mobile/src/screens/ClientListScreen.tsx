@@ -10,10 +10,11 @@ import {
   useColorScheme,
   Alert
 } from 'react-native';
-import { Search, Phone, Calendar, Trash2, Filter } from 'lucide-react-native';
+import { Search, Phone, Calendar, Trash2, Filter, Check } from 'lucide-react-native';
 import * as Linking from 'expo-linking';
-import api from '../api/api';
+import api, { SOCKET_URL } from '../api/api';
 import { colors } from '../theme/colors';
+import { io } from 'socket.io-client';
 
 interface Client {
   _id: string;
@@ -46,10 +47,32 @@ const ClientListScreen = () => {
     fetchClients();
   }, [search]);
 
+  useEffect(() => {
+    const socket = io(SOCKET_URL);
+
+    socket.on('clients:changed', () => {
+      fetchClients();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchClients();
     setRefreshing(false);
+  };
+
+  const handleComplete = async (id: string) => {
+    try {
+      await api.patch(`/clients/${id}/complete`);
+      fetchClients();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleCall = (phone: string) => {
@@ -80,8 +103,9 @@ const ClientListScreen = () => {
 
   const getStatusStyle = (status: string) => {
     switch (status) {
-      case 'Called': return { bg: colors.success + '20', text: colors.success };
+      case 'Completed': return { bg: colors.success + '20', text: colors.success };
       case 'Pending': return { bg: colors.warning + '20', text: colors.warning };
+      case 'Called': return { bg: colors.primary + '20', text: colors.primary };
       case 'Follow-up Required': return { bg: colors.danger + '20', text: colors.danger };
       default: return { bg: colors.slate[100], text: colors.slate[600] };
     }
@@ -99,12 +123,22 @@ const ClientListScreen = () => {
               <Text style={[styles.statusText, { color: statusStyle.text }]}>{item.status}</Text>
             </View>
           </View>
-          <TouchableOpacity 
-            style={styles.callButton} 
-            onPress={() => handleCall(item.phone)}
-          >
-            <Phone size={20} color="#fff" fill="#fff" />
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', gap: 10 }}>
+            {item.status !== 'Completed' && (
+              <TouchableOpacity 
+                style={[styles.callButton, { backgroundColor: colors.primary }]} 
+                onPress={() => handleComplete(item._id)}
+              >
+                <Check size={20} color="#fff" />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity 
+              style={styles.callButton} 
+              onPress={() => handleCall(item.phone)}
+            >
+              <Phone size={20} color="#fff" fill="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.cardInfo}>
@@ -114,9 +148,17 @@ const ClientListScreen = () => {
           </View>
           <View style={styles.infoRow}>
             <Calendar size={14} color={colors.slate[400]} />
-            <Text style={styles.infoText}>{new Date(item.date).toLocaleDateString()}</Text>
+            <Text style={styles.infoText}>
+              {item.meetingDate ? new Date(item.meetingDate).toLocaleDateString() : 'No Meeting'}
+            </Text>
           </View>
         </View>
+
+        {item.businessType ? (
+          <View style={[styles.infoRow, { marginBottom: 10 }]}>
+            <Text style={[styles.infoText, { fontWeight: '700', color: colors.primary }]}>{item.businessType}</Text>
+          </View>
+        ) : null}
 
         {item.notes ? (
           <Text style={styles.notes} numberOfLines={2}>{item.notes}</Text>
