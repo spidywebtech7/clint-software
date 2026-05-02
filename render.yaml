@@ -14,16 +14,3 @@ services:
         value: crm_secret_key_2024
       - key: PORT
         value: 5000
-
-  # Frontend Web Dashboard
-  - type: static_site
-    name: clint-crm-dashboard
-    rootDir: client
-    buildCommand: npm install && npm run build
-    publishPath: dist
-    envVars:
-      - key: VITE_API_URL
-        fromService:
-          name: clint-crm-server
-          type: web
-          property: host
