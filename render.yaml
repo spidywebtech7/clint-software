@@ -16,7 +16,7 @@ services:
         value: 5000
 
   # Frontend Web Dashboard
-  - type: static
+  - type: web
     name: clint-crm-dashboard
     env: static
     plan: free
