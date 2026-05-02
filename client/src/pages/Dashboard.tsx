@@ -44,12 +44,12 @@ const Dashboard = () => {
     <div className="space-y-8 p-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-slate-500 dark:text-slate-400">Welcome back, here's an overview of your client calls.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Dashboard</h1>
+          <p className="text-slate-600 dark:text-slate-300">Welcome back, here's an overview of your client calls.</p>
         </div>
-        <div className="flex gap-2 bg-emerald-50 dark:bg-emerald-950/30 p-3 rounded-xl border border-emerald-100 dark:border-emerald-900/50">
+        <div className="flex gap-2 bg-emerald-50 dark:bg-emerald-500/10 p-3 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
           <TrendingUp className="text-emerald-500" size={20} />
-          <span className="text-emerald-700 dark:text-emerald-400 font-medium">Performance +12%</span>
+          <span className="text-emerald-700 dark:text-emerald-400 font-bold">Performance +12%</span>
         </div>
       </div>
 
@@ -66,12 +66,13 @@ const Dashboard = () => {
               <card.icon size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">{card.label}</p>
-              <p className="text-3xl font-bold">{card.value}</p>
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-300 uppercase tracking-widest mb-1">{card.label}</p>
+              <p className="text-3xl font-black text-slate-900 dark:text-white">{card.value}</p>
             </div>
           </motion.div>
         ))}
       </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <motion.div 

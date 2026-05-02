@@ -47,14 +47,14 @@ const Sidebar = () => {
             className={({ isActive }) => cn(
               "flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group",
               isActive 
-                ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30" 
-                : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                ? "bg-primary-600 text-white shadow-lg shadow-primary-600/40" 
+                : "text-slate-600 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
             )}
           >
             <item.icon size={20} className={cn(
-              "transition-transform group-hover:scale-110"
+              "transition-transform group-hover:scale-110",
             )} />
-            <span className="font-medium">{item.label}</span>
+            <span className="font-bold">{item.label}</span>
           </NavLink>
         ))}
       </nav>

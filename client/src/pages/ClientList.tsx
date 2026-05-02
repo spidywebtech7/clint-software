@@ -120,14 +120,14 @@ const ClientList = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Phone</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Business Type</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Meeting Date</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+              <tr className="bg-slate-50/50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800">
+                <th className="px-6 py-4 text-xs font-black text-slate-600 dark:text-slate-200 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-4 text-xs font-black text-slate-600 dark:text-slate-200 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-4 text-xs font-black text-slate-600 dark:text-slate-200 uppercase tracking-wider">Phone</th>
+                <th className="px-6 py-4 text-xs font-black text-slate-600 dark:text-slate-200 uppercase tracking-wider">Business Type</th>
+                <th className="px-6 py-4 text-xs font-black text-slate-600 dark:text-slate-200 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-xs font-black text-slate-600 dark:text-slate-200 uppercase tracking-wider">Meeting Date</th>
+                <th className="px-6 py-4 text-xs font-black text-slate-600 dark:text-slate-200 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -138,20 +138,21 @@ const ClientList = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors"
+                    className="hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors"
                   >
-                    <td className="px-6 py-4 font-bold text-slate-900 dark:text-white">{client.name}</td>
-                    <td className="px-6 py-4 text-slate-500">{client.email || '-'}</td>
-                    <td className="px-6 py-4 text-slate-500 font-medium">{client.phone}</td>
-                    <td className="px-6 py-4 text-slate-500">{client.businessType || '-'}</td>
+                    <td className="px-6 py-4 font-black text-slate-900 dark:text-white text-base">{client.name}</td>
+                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300 font-medium">{client.email || '-'}</td>
+                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300 font-bold">{client.phone}</td>
+                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300 font-medium">{client.businessType || '-'}</td>
                     <td className="px-6 py-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(client.status)}`}>
+                      <span className={`px-3 py-1 rounded-full text-xs font-black uppercase ${getStatusColor(client.status)}`}>
                         {client.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-500 text-sm">
+                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300 font-bold text-sm">
                       {client.meetingDate ? new Date(client.meetingDate).toLocaleDateString() : 'Not Set'}
                     </td>
+
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
                         {client.status !== 'Completed' && (
