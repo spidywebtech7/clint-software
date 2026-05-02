@@ -14,3 +14,5 @@ services:
         value: crm_secret_key_2024
       - key: PORT
         value: 5000
+      - key: NODE_VERSION
+        value: 20.x
