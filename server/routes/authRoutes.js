@@ -5,6 +5,28 @@ const User = require('../models/User');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_key';
 
+// One-time setup for Admin
+router.get('/setup-admin', async (req, res) => {
+  try {
+    const adminExists = await User.findOne({ email: 'admin21@gmail.com' });
+    if (adminExists) {
+      return res.send('<h1>Admin already exists!</h1><p>You can login with admin21@gmail.com / admin123</p>');
+    }
+
+    const admin = new User({
+      name: 'Admin',
+      email: 'admin21@gmail.com',
+      password: 'admin123',
+      role: 'admin'
+    });
+
+    await admin.save();
+    res.send('<h1>Success!</h1><p>Admin account created. Email: admin21@gmail.com, Password: admin123</p>');
+  } catch (err) {
+    res.status(500).send('Error: ' + err.message);
+  }
+});
+
 // Login route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
