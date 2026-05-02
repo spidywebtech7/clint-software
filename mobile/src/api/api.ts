@@ -3,8 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Replace with your machine's local IP address for physical device testing
 // Example: 'http://192.168.1.10:5000/api'
-export const BASE_URL = 'http://10.116.81.138:5000/api'; 
-export const SOCKET_URL = 'http://10.116.81.138:5000';
+export const BASE_URL = 'https://clint-crm-server.onrender.com/api'; 
+export const SOCKET_URL = 'https://clint-crm-server.onrender.com';
 
 
 const api = axios.create({
